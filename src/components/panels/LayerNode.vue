@@ -62,15 +62,15 @@ const isHovered = computed(() => store.hoveredId === props.node.id && !isSelecte
   transition: background 0.1s;
   user-select: none;
 }
-.layer-row:hover { background: #1a2a3a; }
-.layer-row.hovered { background: #162030; }
-.layer-row.selected { background: #1e3a5f; }
+.layer-row:hover { background: #f5f6f8; }
+.layer-row.hovered { background: #f0f2f5; }
+.layer-row.selected { background: #fff3ee; }
 
 .toggle-arrow {
   display: inline-block;
   width: 14px;
   font-size: 12px;
-  color: #6a9aba;
+  color: #aab4c0;
   transition: transform 0.15s;
   cursor: pointer;
   text-align: center;
@@ -82,16 +82,17 @@ const isHovered = computed(() => store.hoveredId === props.node.id && !isSelecte
 .layer-tag {
   font-size: 10px;
   font-family: monospace;
-  color: #4cc9f0;
-  background: #0f2a3f;
+  color: #ff6b35;
+  background: #fff3ee;
   padding: 1px 4px;
   border-radius: 3px;
+  border: 1px solid #ffd0bc;
   flex-shrink: 0;
 }
 
 .layer-name {
   font-size: 11px;
-  color: #9ab9cc;
+  color: #555;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -109,11 +110,11 @@ const isHovered = computed(() => store.hoveredId === props.node.id && !isSelecte
   background: none;
   border: none;
   cursor: pointer;
-  color: #7a9ab0;
+  color: #aab4c0;
   font-size: 10px;
   padding: 1px 4px;
   border-radius: 3px;
   transition: background 0.1s, color 0.1s;
 }
-.la-btn:hover { background: #c0392b; color: #fff; }
+.la-btn:hover { background: #fde8e8; color: #c0392b; }
 </style>

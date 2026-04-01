@@ -7,7 +7,7 @@
     :data-id="node.id"
     v-bind="nodeAttrs"
     :contenteditable="isEditing ? 'true' : undefined"
-    @click.stop="handleClick"
+    @click.stop="handleClick($event)"
     @mouseenter.stop="handleMouseEnter"
     @mouseleave.stop="handleMouseLeave"
     @blur="stopEdit"
@@ -28,6 +28,7 @@
           v-for="child in node.children"
           :key="child.id"
           :node="child"
+          :active-device="activeDevice"
         />
         <!-- Empty droppable hint -->
         <div
@@ -47,7 +48,7 @@ import { useEditorStore } from '../../stores/editor'
 import { defaultBlocks } from '../../blocks/defaultBlocks'
 import type { ComponentNode } from '../../types'
 
-const props = defineProps<{ node: ComponentNode }>()
+const props = defineProps<{ node: ComponentNode; activeDevice?: string }>()
 
 const store = useEditorStore()
 const elRef = ref<HTMLElement | null>(null)
@@ -71,14 +72,35 @@ const nodeClasses = computed(() => ({
   'wb-hovered': isHovered.value,
   'wb-drop-target': isDragTarget.value,
   'wb-editing': isEditing.value,
+  [`wb-type-${props.node.type}`]: true,
 }))
 
 const nodeAttrs = computed(() => {
   const attrs: Record<string, string> = { ...props.node.attrs }
-  const styleStr = Object.entries(props.node.styles)
-    .map(([k, v]) => `${k}:${v}`)
-    .join(';')
-  attrs.style = styleStr
+  const styles = { ...props.node.styles }
+
+  // Responsive overrides for mobile
+  if (props.activeDevice === 'mobile') {
+    if (props.node.type === 'columns') {
+      styles['flex-direction'] = 'column'
+      styles['width'] = '100%'
+    }
+    if (props.node.type === 'column') {
+      styles['width'] = '100%'
+      styles['max-width'] = '100%'
+      styles['flex'] = 'none'
+      styles['min-width'] = '0'
+      styles['overflow'] = 'hidden'
+      styles['box-sizing'] = 'border-box'
+    }
+    if (props.node.type === 'image') {
+      styles['width'] = '100%'
+      styles['max-width'] = '100%'
+      styles['height'] = 'auto'
+    }
+  }
+
+  attrs.style = Object.entries(styles).map(([k, v]) => `${k}:${v}`).join(';')
   if (props.node.classes.length) {
     attrs.class = props.node.classes.join(' ')
   }
@@ -87,7 +109,10 @@ const nodeAttrs = computed(() => {
 
 // ── Event handlers ────────────────────────────────────────────────────────
 
-function handleClick() {
+function handleClick(e: MouseEvent) {
+  // Prevent <a> tags from navigating in the editor
+  if (props.node.tag === 'a') e.preventDefault()
+
   if (isEditing.value) return // let browser position cursor
 
   if (!props.node.selectable) return
@@ -165,17 +190,18 @@ function handleDrop(e: DragEvent) {
 .wb-node {
   position: relative;
   box-sizing: border-box;
+  max-width: 100%;
   outline: 2px solid transparent;
   outline-offset: -2px;
   transition: outline-color 0.1s;
 }
 
 .wb-node.wb-hovered {
-  outline: 2px dashed #4cc9f0 !important;
+  outline: 2px dashed #ff6b35 !important;
 }
 
 .wb-node.wb-selected {
-  outline: 2px solid #4cc9f0 !important;
+  outline: 2px solid #ff6b35 !important;
 }
 
 .wb-node.wb-editing {

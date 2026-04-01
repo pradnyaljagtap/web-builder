@@ -13,6 +13,7 @@
         v-for="node in store.tree"
         :key="node.id"
         :node="node"
+        :active-device="activeDevice"
       />
 
       <!-- Empty state -->
@@ -97,15 +98,15 @@ onUnmounted(() => {
 <style scoped>
 .canvas-wrapper {
   flex: 1;
-  background: #1a2a3a;
+  background: #e8eaed;
   overflow: auto;
   display: flex;
   justify-content: center;
-  padding: 24px;
+  padding: 28px;
   min-height: 0;
 }
 .canvas-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
-.canvas-wrapper::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 3px; }
+.canvas-wrapper::-webkit-scrollbar-thumb { background: #c5c9d0; border-radius: 3px; }
 
 .canvas-frame {
   background: #fff;
@@ -114,6 +115,8 @@ onUnmounted(() => {
   border-radius: 2px;
   transition: width 0.3s;
   position: relative;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .device-desktop { width: 100%; max-width: 1280px; }
@@ -142,8 +145,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #4cc9f0;
-  color: #0d1b2a;
+  background: #ff6b35;
+  color: #fff;
   padding: 3px 6px;
   border-radius: 4px 4px 0 0;
   font-size: 11px;
@@ -151,23 +154,23 @@ onUnmounted(() => {
   z-index: 9999;
   pointer-events: all;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(255,107,53,0.35);
 }
 .sel-label {
   margin-right: 4px;
   padding-right: 8px;
-  border-right: 1px solid rgba(0,0,0,0.2);
+  border-right: 1px solid rgba(255,255,255,0.3);
 }
 .sel-btn {
-  background: rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.15);
   border: none;
   cursor: pointer;
   padding: 2px 6px;
   border-radius: 3px;
   font-size: 12px;
-  color: #0d1b2a;
+  color: #fff;
   transition: background 0.1s;
 }
-.sel-btn:hover { background: rgba(0,0,0,0.25); }
-.sel-btn.danger:hover { background: #e74c3c; color: #fff; }
+.sel-btn:hover { background: rgba(255,255,255,0.3); }
+.sel-btn.danger:hover { background: #c0392b; color: #fff; }
 </style>

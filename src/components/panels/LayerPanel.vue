@@ -25,16 +25,16 @@ const store = useEditorStore()
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #0d1b2a;
+  background: #fff;
 }
 .panel-header {
   padding: 10px 12px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #4cc9f0;
-  border-bottom: 1px solid #1e3a5f;
+  color: #8a9ab0;
+  border-bottom: 1px solid #e8eaed;
 }
 .layers-scroll {
   flex: 1;
@@ -42,10 +42,10 @@ const store = useEditorStore()
   padding: 6px 0;
 }
 .layers-scroll::-webkit-scrollbar { width: 4px; }
-.layers-scroll::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 2px; }
+.layers-scroll::-webkit-scrollbar-thumb { background: #d0d4da; border-radius: 2px; }
 .no-layers {
   text-align: center;
-  color: #5a7a9a;
+  color: #aab4c0;
   font-size: 12px;
   padding: 20px;
 }

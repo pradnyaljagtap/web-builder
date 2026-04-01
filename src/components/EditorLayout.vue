@@ -1,51 +1,35 @@
 <template>
   <div class="editor-layout">
     <!-- Top toolbar -->
-    <Toolbar @device-change="activeDevice = $event" />
+    <Toolbar />
 
     <div class="editor-body">
-      <!-- Left panel -->
-      <aside class="left-panel">
-        <div class="tab-bar">
-          <button
-            class="tab-btn"
-            :class="{ active: store.activeLeftTab === 'blocks' }"
-            @click="store.activeLeftTab = 'blocks'"
-          >Blocks</button>
-          <button
-            class="tab-btn"
-            :class="{ active: store.activeLeftTab === 'layers' }"
-            @click="store.activeLeftTab = 'layers'"
-          >Layers</button>
-        </div>
-        <div class="tab-content">
-          <BlockPanel v-show="store.activeLeftTab === 'blocks'" />
-          <LayerPanel v-show="store.activeLeftTab === 'layers'" />
-        </div>
-      </aside>
-
       <!-- Canvas -->
       <main class="canvas-area">
-        <Canvas :active-device="activeDevice" />
+        <Canvas :active-device="store.activeDevice" />
       </main>
 
-      <!-- Right panel -->
-      <aside class="right-panel">
-        <div class="tab-bar">
-          <button
-            class="tab-btn"
-            :class="{ active: store.activeRightTab === 'styles' }"
-            @click="store.activeRightTab = 'styles'"
-          >Style</button>
-          <button
-            class="tab-btn"
-            :class="{ active: store.activeRightTab === 'traits' }"
-            @click="store.activeRightTab = 'traits'"
-          >Traits</button>
+      <!-- Right side: content panel + vertical icon tabs -->
+      <aside class="right-side">
+        <div class="panel-content">
+          <BlockPanel v-show="activeTab === 'content'" />
+          <LayerPanel v-show="activeTab === 'layers'" />
+          <StylePanel v-show="activeTab === 'style'" />
+          <TraitPanel v-show="activeTab === 'traits'" />
         </div>
-        <div class="tab-content">
-          <StylePanel v-show="store.activeRightTab === 'styles'" />
-          <TraitPanel v-show="store.activeRightTab === 'traits'" />
+
+        <div class="icon-tabs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            class="icon-tab"
+            :class="{ active: activeTab === tab.id }"
+            :title="tab.label"
+            @click="activeTab = tab.id"
+          >
+            <span class="icon-tab-icon" v-html="tab.icon" />
+            <span class="icon-tab-label">{{ tab.label }}</span>
+          </button>
         </div>
       </aside>
     </div>
@@ -63,14 +47,41 @@ import TraitPanel from './panels/TraitPanel.vue'
 import Canvas from './canvas/Canvas.vue'
 
 const store = useEditorStore()
-const activeDevice = ref('desktop')
+const activeTab = ref<'content' | 'layers' | 'style' | 'traits'>('content')
+
+const tabs = [
+  {
+    id: 'content',
+    label: 'Content',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5h6v6H4zM14 5h6v6h-6zM4 13h6v6H4zM14 13h6v6h-6z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`,
+  },
+  {
+    id: 'layers',
+    label: 'Blocks',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="4" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="10" width="18" height="4" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="16" width="18" height="4" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg>`,
+  },
+  {
+    id: 'style',
+    label: 'Body',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2.5" stroke="currentColor" stroke-width="1.6"/><rect x="7" y="7" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg>`,
+  },
+  {
+    id: 'images',
+    label: 'Images',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><path d="M3 17l5-4 4 3 3-2.5 6 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  },
+  {
+    id: 'traits',
+    label: 'Audit',
+    icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`,
+  },
+]
 
 // Global keyboard shortcuts
 function handleKeydown(e: KeyboardEvent) {
   const target = e.target as HTMLElement
   const tag = target.tagName.toLowerCase()
   if (['input', 'textarea', 'select'].includes(tag)) return
-  // Don't intercept keys while typing inside a contenteditable canvas element
   if (target.isContentEditable) return
 
   if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
@@ -102,29 +113,13 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background: #0d1b2a;
+  background: #f0f2f5;
 }
 
 .editor-body {
   flex: 1;
   display: flex;
   min-height: 0;
-}
-
-.left-panel,
-.right-panel {
-  width: 240px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  background: #0d1b2a;
-  border-right: 1px solid #1e3a5f;
-  overflow: hidden;
-}
-
-.right-panel {
-  border-right: none;
-  border-left: 1px solid #1e3a5f;
 }
 
 .canvas-area {
@@ -135,33 +130,74 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   overflow: hidden;
 }
 
-.tab-bar {
+/* Right side: panel content + icon tabs */
+.right-side {
   display: flex;
-  background: #0a1520;
-  border-bottom: 1px solid #1e3a5f;
+  flex-direction: row;
   flex-shrink: 0;
+  border-left: 1px solid #e2e5e9;
+  background: #fff;
 }
 
-.tab-btn {
-  flex: 1;
-  background: none;
-  border: none;
-  color: #6a8a9a;
-  padding: 9px 0;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: color 0.15s, background 0.15s;
-  border-bottom: 2px solid transparent;
-}
-.tab-btn:hover { color: #aac; background: #122030; }
-.tab-btn.active { color: #4cc9f0; border-bottom-color: #4cc9f0; }
-
-.tab-content {
-  flex: 1;
-  overflow: hidden;
+.panel-content {
+  width: 260px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-right: 1px solid #e2e5e9;
+}
+
+/* Vertical icon tabs on the far right */
+.icon-tabs {
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #fff;
+  border-left: 1px solid #e2e5e9;
+  padding: 4px 0;
+  gap: 0;
+  overflow-y: auto;
+}
+
+.icon-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 4px 10px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  color: #9aa5b4;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.icon-tab:hover {
+  color: #555;
+  background: #f8f9fa;
+}
+.icon-tab.active {
+  color: #ff6b35;
+  border-left-color: #ff6b35;
+  background: #fff8f5;
+}
+
+.icon-tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.icon-tab-label {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0.2px;
+  text-align: center;
+  white-space: nowrap;
 }
 </style>

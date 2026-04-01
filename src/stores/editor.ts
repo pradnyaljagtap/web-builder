@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { ComponentNode, HistoryEntry } from '../types'
 import { generateId, generateIds } from '../utils/idGenerator'
+import { toUnlayer, fromUnlayer } from '../utils/unlayerConverter'
 
 export const useEditorStore = defineStore('editor', () => {
   const tree = ref<ComponentNode[]>([])
@@ -11,6 +12,8 @@ export const useEditorStore = defineStore('editor', () => {
   const historyIndex = ref(0)
   const activeLeftTab = ref<'blocks' | 'layers'>('blocks')
   const activeRightTab = ref<'styles' | 'traits'>('styles')
+  const pageName = ref('Untitled Page')
+  const activeDevice = ref('desktop')
 
   // ── Getters ──────────────────────────────────────────────────────────────
 
@@ -186,17 +189,34 @@ export const useEditorStore = defineStore('editor', () => {
   }
 
   function saveToJson(): string {
-    return JSON.stringify({ tree: tree.value }, null, 2)
+    return JSON.stringify(toUnlayer(tree.value, pageName.value), null, 2)
   }
 
   function loadFromJson(json: string) {
     try {
       const data = JSON.parse(json)
       snapshot()
-      tree.value = data.tree ?? []
+      // Unwrap SuperAGI/API response wrapper if present
+      const unlayerData = data.details?.design_json ?? data
+      // Support both Unlayer format (has "body") and our old format (has "tree")
+      if (unlayerData.body && unlayerData.body.rows) {
+        const converted = fromUnlayer(unlayerData)
+        if (!converted.tree || converted.tree.length === 0) {
+          alert('Loaded file appears empty or could not be converted.')
+        }
+        tree.value = converted.tree ?? []
+        pageName.value = converted.pageName ?? 'Untitled Page'
+      } else if (unlayerData.tree) {
+        tree.value = unlayerData.tree
+        pageName.value = unlayerData.pageName ?? 'Untitled Page'
+      } else {
+        alert('Unrecognized JSON format.')
+        return
+      }
       selectedId.value = null
-    } catch {
-      alert('Invalid JSON file')
+    } catch (err) {
+      console.error('Load failed:', err)
+      alert('Failed to load JSON: ' + (err instanceof Error ? err.message : String(err)))
     }
   }
 
@@ -208,6 +228,8 @@ export const useEditorStore = defineStore('editor', () => {
     tree,
     selectedId,
     hoveredId,
+    pageName,
+    activeDevice,
     activeLeftTab,
     activeRightTab,
     selectedComponent,

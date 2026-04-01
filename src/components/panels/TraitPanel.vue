@@ -105,7 +105,7 @@ function updateClasses(value: string) {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #0d1b2a;
+  background: #fff;
 }
 
 .no-selection {
@@ -113,7 +113,7 @@ function updateClasses(value: string) {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #5a7a9a;
+  color: #aab4c0;
   font-size: 12px;
   text-align: center;
   padding: 20px;
@@ -124,18 +124,19 @@ function updateClasses(value: string) {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  border-bottom: 1px solid #1e3a5f;
-  background: #0f2233;
+  border-bottom: 1px solid #e8eaed;
+  background: #fafbfc;
 }
 .comp-tag {
   font-size: 10px;
   font-family: monospace;
-  color: #4cc9f0;
-  background: #1a3a5f;
+  color: #ff6b35;
+  background: #fff3ee;
   padding: 2px 6px;
   border-radius: 3px;
+  border: 1px solid #ffd0bc;
 }
-.comp-name { font-size: 12px; color: #9ab9cc; }
+.comp-name { font-size: 12px; color: #666; }
 
 .traits-scroll {
   flex: 1;
@@ -143,16 +144,16 @@ function updateClasses(value: string) {
   padding: 8px 0;
 }
 .traits-scroll::-webkit-scrollbar { width: 4px; }
-.traits-scroll::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 2px; }
+.traits-scroll::-webkit-scrollbar-thumb { background: #d0d4da; border-radius: 2px; }
 
 .trait-section { margin-bottom: 4px; }
 
 .section-title {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #4cc9f0;
+  color: #8a9ab0;
   padding: 8px 12px 4px;
 }
 
@@ -165,7 +166,7 @@ function updateClasses(value: string) {
 
 .trait-label {
   font-size: 10px;
-  color: #6a8a9a;
+  color: #8a9ab0;
   width: 80px;
   flex-shrink: 0;
   padding-top: 5px;
@@ -173,23 +174,23 @@ function updateClasses(value: string) {
 
 .trait-input {
   flex: 1;
-  background: #1a2a3a;
-  border: 1px solid #2a4a6a;
-  color: #cdd;
+  background: #f5f6f8;
+  border: 1px solid #e2e5e9;
+  color: #333;
   padding: 5px 8px;
   border-radius: 4px;
   font-size: 11px;
   outline: none;
   min-width: 0;
 }
-.trait-input:focus { border-color: #4cc9f0; }
-.trait-input::placeholder { color: #3a5a6a; }
+.trait-input:focus { border-color: #ff6b35; background: #fff; }
+.trait-input::placeholder { color: #bdc5ce; }
 
 .trait-textarea {
   flex: 1;
-  background: #1a2a3a;
-  border: 1px solid #2a4a6a;
-  color: #cdd;
+  background: #f5f6f8;
+  border: 1px solid #e2e5e9;
+  color: #333;
   padding: 6px 8px;
   border-radius: 4px;
   font-size: 11px;
@@ -199,11 +200,11 @@ function updateClasses(value: string) {
   font-family: inherit;
   line-height: 1.5;
 }
-.trait-textarea:focus { border-color: #4cc9f0; }
+.trait-textarea:focus { border-color: #ff6b35; background: #fff; }
 
 .no-attrs {
   font-size: 11px;
-  color: #3a5a6a;
+  color: #bdc5ce;
   padding: 4px 12px 8px;
 }
 </style>
